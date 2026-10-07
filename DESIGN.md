@@ -1,0 +1,2 @@
+# Oscar design system
+Warm clinical atlas workspace. A narrow persistent navigation rail, an anatomical index, a large warm neutral 3D stage and an editorial detail panel. Pale ivory skeleton, deep forest green selection, graphite text, understated strokes. Inter variable type. Compact controls with generous separation between tasks. Model labels feel like annotations on a biology worksheet. Mobile panels become dismissible sheets. Group colors always carry a name and number. State changes are quiet; camera movement supports orientation.
