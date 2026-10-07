@@ -28,7 +28,7 @@ export function mapModel(gltf: GLTF): {
     const names: string[] = [];
     let parent: THREE.Object3D | null = node;
     while (parent && parent !== gltf.scene) {
-      names.push(parent.name.replace(/\.\d+$/, ""));
+      names.push(parent.name.replace(/[._]\d+$/, ""));
       parent = parent.parent;
     }
     const bone = structures.find((b) =>
@@ -122,7 +122,9 @@ export function SkeletonModel() {
             : null,
         });
       })
-      .catch(() => {});
+      .catch(() => {
+        if (active) useAnatomy.setState({modelKind: "procedural", modelNotice: "Le modèle anatomique n’a pas pu être chargé. Une version simplifiée est affichée."});
+      });
     return () => {
       active = false;
       controller.abort();

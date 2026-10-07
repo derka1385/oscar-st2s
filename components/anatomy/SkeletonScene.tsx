@@ -68,16 +68,16 @@ export function SkeletonScene() {
         }}
         aria-label="Oscar, squelette 3D interactif. Glisser pour tourner, molette pour zoomer. Utilisez l’index pour sélectionner au clavier."
       >
-        <ambientLight intensity={1.45} />
-        <hemisphereLight args={["#fffdf5", "#a9a491", 1.4]} />
+        <ambientLight intensity={0.7} />
+        <hemisphereLight args={["#fffdf5", "#a9a491", 0.8]} />
         <directionalLight
           position={[3, 9, 7]}
-          intensity={3.3}
+          intensity={2.1}
           castShadow
           shadow-mapSize={[1024, 1024]}
           shadow-normalBias={0.03}
         />
-        <directionalLight position={[-5, 7, -3]} intensity={1.7} />
+        <directionalLight position={[-5, 7, -3]} intensity={0.9} />
         <Suspense fallback={null}>
           <SkeletonModel />
         </Suspense>

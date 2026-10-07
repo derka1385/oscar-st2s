@@ -55,7 +55,7 @@ export const BoneMesh = memo(function BoneMesh({
         ? "#dac78e"
         : a.groupColors
           ? group.color
-          : "#dfd7c3";
+          : "#c9bea7";
   if (learning && q.flash === id)
     color = q.flashCorrect ? "#62a786" : "#d87465";
   const click = (e: ThreeEvent<MouseEvent>) => {

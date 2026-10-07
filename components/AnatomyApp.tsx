@@ -130,11 +130,14 @@ function Help({ close }: { close: () => void }) {
       <div className="help-model">
         <Box size={17} />
         <p>
-          Oscar utilise actuellement un modèle 3D simplifié. Les formes et
-          proportions sont indicatives ; les fiches donnent les repères
-          anatomiques à apprendre.
+          Oscar utilise les maillages anatomiques BodyParts3D. Le coccyx et la
+          symphyse pubienne sont schématisés. Les zones de sélection de
+          l’ilium, de l’ischion et du pubis sont approximatives sur l’os coxal fusionné.
         </p>
       </div>
+      <a href="/models/ATTRIBUTION.md" target="_blank" rel="noreferrer" className="text-button">
+        Modèle 3D : sources et licence <ArrowUpRight size={14} />
+      </a>
       <a
         href="https://openstax.org/books/anatomy-and-physiology-2e/pages/7-1-divisions-of-the-skeletal-system"
         target="_blank"

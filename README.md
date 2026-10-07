@@ -24,6 +24,6 @@ All records begin at zero. localStorage stores mastery, correct/wrong counts, re
 
 `data/anatomy/` contains the typed content and mesh mapping. `lib/` contains assessment, mastery and review scheduling. `store/` separates view state, persistent progress, worksheet and quiz sessions. `components/anatomy/` owns geometry, loading, raycasting, cameras and projected labels. Learning and exercise panels consume educational IDs.
 
-**Model limitation:** the current skeleton is the requested temporary primitive-based model, not a realistic clinical reconstruction. See [model integration](docs/model-integration.md) for replacing it with `/public/models/oscar-skeleton.glb`.
+**Anatomical model:** the included GLB uses BodyParts3D meshes adapted from BodyExplorer, supplemented with a BodyParts3D sacrum. All 30 educational targets remain selectable, including the aggregate hip bone. The coccyx and pubic symphysis are schematic; picking regions on the fused hip bones are approximate. See [model integration](docs/model-integration.md) and [asset attribution](public/models/ATTRIBUTION.md).
 
 Privacy: progress stays on the device. There are no analytics, uploads, external AI calls, sign-up forms or invented example scores. Hosting is owner-private by default.

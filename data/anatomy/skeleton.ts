@@ -1,4 +1,5 @@
 import { groupById, type GroupId } from "./groups";
+import modelAnchors from "./model-anchors.json";
 export type Vec3 = [number, number, number];
 export type AnatomyStructure = {
   id: string;
@@ -356,12 +357,12 @@ export const structures: AnatomyStructure[] = rows.map(
     name,
     category,
     aliases,
-    anchor,
+    anchor: ((modelAnchors as Record<string, number[]>)[id] as Vec3 | undefined) ?? anchor,
     description,
     fact,
     kind,
     groupName: groupById[category].name,
-    modelMeshNames: modelNames[id],
+    modelMeshNames: [id, ...modelNames[id]],
     level: "ST2S",
     tags: ["squelette", groupById[category].shortName],
   }),

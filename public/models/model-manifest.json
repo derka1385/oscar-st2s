@@ -1,0 +1,56 @@
+{
+  "sourceCommit": "7d04bf3c4de2bd9cb234dd51d7e6857c099afafd",
+  "meshes": 205,
+  "triangles": 544940,
+  "structures": {
+    "cervicales": 6,
+    "axis": 1,
+    "sternum": 3,
+    "phalanges-pied": 28,
+    "phalanges-main": 28,
+    "thoraciques": 12,
+    "crane": 8,
+    "lombaires": 5,
+    "tarse": 14,
+    "carpe": 14,
+    "clavicule": 2,
+    "cotes": 24,
+    "femur": 2,
+    "fibula": 2,
+    "metacarpe": 10,
+    "metatarse": 10,
+    "ischion": 2,
+    "pubis": 2,
+    "ilium": 2,
+    "humerus": 2,
+    "face": 12,
+    "patella": 2,
+    "radius": 2,
+    "scapula": 2,
+    "tibia": 2,
+    "ulna": 2,
+    "sacrum": 1,
+    "coccyx": 4,
+    "symphyse": 1
+  },
+  "schematic": [
+    "coccyx",
+    "symphyse"
+  ],
+  "approximatePickingRegions": [
+    "ilium",
+    "ischion",
+    "pubis"
+  ],
+  "omittedOutsideCurriculum": [
+    "hyoid bone",
+    "hyoid bone (2)",
+    "sesamoid bone of left foot",
+    "sesamoid bone of left foot (2)",
+    "sesamoid bone of right foot",
+    "sesamoid bone of right foot (2)"
+  ],
+  "sourceSha256": "894ed0e98a266b727a7e290f0d4123bb087c4afe84a48d55af71d1a351ca99a5",
+  "sacrumSha256": "d52dac1add057e05699c3c767736ab45c9c426ab0eebd438e20cd4f0768ee3d8",
+  "outputSha256": "8f92577e5a963fb1e75a700e07efc20fdc853566a69ee35558e0d738ee016bd6"
+}
