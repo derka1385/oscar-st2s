@@ -564,7 +564,7 @@ export function AnatomyApp() {
                   <Box size={12} />
                   {a.modelKind === "glb"
                     ? "Modèle anatomique"
-                    : "Modèle simplifié"}
+                    : a.modelKind === "error" ? "Modèle indisponible" : "Chargement du modèle…"}
                   <CircleHelp size={12} />
                 </button>
               </div>

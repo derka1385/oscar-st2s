@@ -1155,9 +1155,14 @@ button:active:not(:disabled) {
   text-align: center;
   padding: 30px;
 }
+.scene-loading,
 .scene-error {
   background: #eff1e8;
-  z-index: 2;
+  z-index: 6;
+}
+.scene-loading small {
+  font-size: 12px;
+  color: #7b8275;
 }
 .scene-error p {
   max-width: 300px;

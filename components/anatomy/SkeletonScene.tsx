@@ -42,16 +42,20 @@ class SceneError extends Component<
     );
   }
 }
+function ModelLoading() {
+  return (
+    <div className="scene-loading" role="status" aria-live="polite">
+      <LoaderCircle className="spin" size={28} aria-hidden="true" />
+      <span>Chargement du squelette 3D…</span>
+      <small>Préparation du modèle anatomique</small>
+    </div>
+  );
+}
 export function SkeletonScene() {
   const [bridge] = useState(() => new AnnotationBridge());
   const ready = useClientReady();
-  if (!ready)
-    return (
-      <div className="scene-loading">
-        <LoaderCircle className="spin" size={24} />
-        <span>Préparation d’Oscar…</span>
-      </div>
-    );
+  const modelKind = useAnatomy((s) => s.modelKind);
+  if (!ready) return <ModelLoading />;
   return (
     <SceneError>
       <Canvas
@@ -94,7 +98,18 @@ export function SkeletonScene() {
         <CameraController />
         <AnnotationProjector bridge={bridge} />
       </Canvas>
-      <AnatomyLabels bridge={bridge} />
+      {modelKind === "glb" && <AnatomyLabels bridge={bridge} />}
+      {modelKind === "loading" && <ModelLoading />}
+      {modelKind === "error" && (
+        <div className="scene-error" role="alert">
+          <Box size={32} aria-hidden="true" />
+          <h3>Le squelette n’a pas pu être chargé.</h3>
+          <p>Vérifie ta connexion, puis réessaie.</p>
+          <button className="secondary-button" onClick={() => window.location.reload()}>
+            <RotateCcw size={15} /> Réessayer
+          </button>
+        </div>
+      )}
     </SceneError>
   );
 }

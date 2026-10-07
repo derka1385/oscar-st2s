@@ -1,15 +1,16 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GLTFLoader,
   type GLTF,
 } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { structures } from "@/data/anatomy/skeleton";
 import { useAnatomy } from "@/store/anatomyStore";
 import { BoneMesh } from "./BoneMesh";
-import { createProceduralSkeleton, type ModelPart } from "./proceduralGeometry";
+import type { ModelPart } from "./proceduralGeometry";
 // Match exact names, descendants of a mapped node, or names with Blender's
 // numeric suffix. All other application code refers only to educational IDs.
 export function mapModel(gltf: GLTF): {
@@ -86,22 +87,14 @@ function loadModel(url: string) {
   return gltfCache.get(url)!;
 }
 export function SkeletonModel() {
-  const fallback = useMemo(() => mergeParts(createProceduralSkeleton()), []);
   const [loaded, setLoaded] = useState<ModelPart[] | null>(null);
+  const renderedFrames = useRef(0);
+  const announcedReady = useRef(false);
   useEffect(() => {
     let active = true;
-    const controller = new AbortController();
-    fetch("/models/oscar-skeleton.glb", {
-      method: "HEAD",
-      signal: controller.signal,
-    })
-      .then(async (r) => {
-        if (
-          !r.ok ||
-          (r.headers.get("content-type") ?? "").includes("text/html")
-        )
-          return;
-        const gltf = await loadModel("/models/oscar-skeleton.glb");
+    useAnatomy.setState({ modelKind: "loading", modelNotice: null });
+    loadModel("/models/oscar-skeleton.glb")
+      .then((gltf) => {
         if (!active) return;
         const mapped = mapModel(gltf);
         const represented = new Set(mapped.parts.map((p) => p.id));
@@ -109,35 +102,41 @@ export function SkeletonModel() {
           (b) => b.id !== "coxal" && !represented.has(b.id),
         );
         if (missing.length) {
-          useAnatomy.setState({
-            modelNotice: `Modèle GLB incomplet : ${missing.length} structures non associées. Le modèle simplifié reste actif.`,
-          });
-          return;
+          mapped.parts.forEach((p) => p.geometry.dispose());
+          throw new Error("Incomplete anatomy model");
         }
-        setLoaded(mergeParts(mapped.parts));
+        const prepared = mergeParts(mapped.parts);
+        mapped.parts.forEach((p) => p.geometry.dispose());
+        setLoaded(prepared);
         useAnatomy.setState({
-          modelKind: "glb",
           modelNotice: mapped.unmatched.length
             ? `${mapped.unmatched.length} maillages non associés ont été ignorés.`
             : null,
         });
       })
       .catch(() => {
-        if (active) useAnatomy.setState({modelKind: "procedural", modelNotice: "Le modèle anatomique n’a pas pu être chargé. Une version simplifiée est affichée."});
+        if (active) useAnatomy.setState({ modelKind: "error" });
       });
     return () => {
       active = false;
-      controller.abort();
     };
   }, []);
+  useFrame(() => {
+    // Reveal after a complete frame with the prepared meshes, including their
+    // first GPU upload and shader compilation, rather than after download alone.
+    if (!loaded || announcedReady.current) return;
+    if (renderedFrames.current++ < 1) return;
+    announcedReady.current = true;
+    useAnatomy.setState({ modelKind: "glb" });
+  });
   const grouped = useMemo(() => {
     const m = new Map<string, ModelPart[]>();
-    for (const part of loaded ?? fallback) {
+    for (const part of loaded ?? []) {
       if (!m.has(part.id)) m.set(part.id, []);
       m.get(part.id)!.push(part);
     }
     return [...m.entries()];
-  }, [loaded, fallback]);
+  }, [loaded]);
   return (
     <group>
       {grouped.map(([id, parts]) => (
