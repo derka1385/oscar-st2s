@@ -18,7 +18,7 @@ npm run dev
 - **Mode fiche:** ten anchored fill-in labels, accent-insensitive matching, historical aliases, correction and error-specific revision.
 - **Ma progression:** per-structure and per-group mastery, due structures, saved revisions and recent sessions.
 
-All records begin at zero. localStorage stores mastery, correct/wrong counts, recent performance, review dates, streaks, saved structures, XP and sessions. Mastery decays with elapsed time; scheduling weights low mastery, recent errors and overdue dates. No accounts or remote database are needed. Storage is per browser, per origin.
+All records begin at zero. localStorage stores mastery, correct/wrong counts, recent performance, review dates, streaks, saved structures, XP and sessions. Mastery decays with elapsed time; scheduling weights low mastery, recent errors and overdue dates. Guest access needs no account and stores progress per browser/origin. Optional Firebase accounts synchronize personal progress across devices.
 
 ## Languages
 
@@ -32,4 +32,4 @@ Ukrainian terminology was checked against [Sumy State University’s anatomy tex
 
 **Anatomical model:** the included GLB uses BodyParts3D meshes adapted from BodyExplorer, supplemented with a BodyParts3D sacrum. All 30 educational targets remain selectable, including the aggregate hip bone. The coccyx and pubic symphysis are schematic; picking regions on the fused hip bones are approximate. See [model integration](docs/model-integration.md) and [asset attribution](public/models/ATTRIBUTION.md).
 
-Privacy: progress stays on the device. There are no analytics, uploads, external AI calls, sign-up forms or invented example scores. Hosting is owner-private by default.
+Privacy: guest progress stays on the device. With an optional account, Firebase Authentication manages email/password and Firestore stores learning progress under the signed-in user ID. There are no analytics or external AI calls. The deployed learning site is public; personal progress is protected by Firebase security rules. See [Firebase accounts](docs/firebase-accounts.md).

@@ -1,4 +1,6 @@
 "use client";
+import { AccountButton, ProgressStatus } from "../account/AccountUI";
+import { useAccount } from "@/store/authStore";
 import { useI18n } from "@/lib/useI18n";
 import {
   ArrowUpRight,
@@ -15,6 +17,7 @@ import { structures } from "@/data/anatomy/skeleton";
 export function Dashboard() {
   const { t, locale, groups, boneById } = useI18n();
   const p = useProgress();
+  const accountUser = useAccount((state) => state.user);
   const records = Object.values(p.records);
   const average = Math.round(
     records.reduce((s, r) => s + effectiveMastery(r), 0) / records.length,
@@ -28,6 +31,7 @@ export function Dashboard() {
       </div>
       <h2>{t("Chaque os ")}<br />{t("à son rythme. ")}</h2>
       <p className="muted">{t("Tes révisions, au bon moment.")}</p>
+      <div className="dashboard-account"><AccountButton /><p>{t(accountUser ? "Ta progression est liée à ton compte." : "Retrouve tes révisions sur tous tes appareils.")}</p></div>
       <div className="global-progress">
         <div>
           <span>{t("Progression globale")}</span>
@@ -115,7 +119,7 @@ export function Dashboard() {
           <p>{t("Ta première session commence ici.")}</p>
         )}
       </div>
-      <div className="local-note">{t("Progression enregistrée sur cet appareil. ")}</div>
+      <div className="local-note"><ProgressStatus /></div>
     </aside>
   );
 }

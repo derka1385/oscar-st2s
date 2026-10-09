@@ -1,3 +1,4 @@
+import { parseProgress } from "@/lib/firebase/progress";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { freshRecords, applyReview, type ReviewRecord } from "@/lib/mastery";
@@ -102,3 +103,12 @@ export const useProgress = create<Progress>()(
     },
   ),
 );
+
+/** Swap persistence before changing data, so signing out never exposes another account's cache. */
+export function switchProgressAccount(uid: string | null) {
+  const key = uid ? `oscar-progress-user-v1:${uid}` : "oscar-progress-v1";
+  let cached: unknown = null;
+  try { cached = JSON.parse(window.localStorage.getItem(key) ?? "null")?.state; } catch { /* Start fresh if this account has no readable cache. */ }
+  useProgress.persist.setOptions({ name: key });
+  useProgress.setState({ ...parseProgress(cached), storageError: false });
+}

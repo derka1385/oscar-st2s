@@ -1,6 +1,8 @@
 "use client";
 import { useI18n } from "@/lib/useI18n";
 import Link from "next/link";
+import { AccountButton, AccountDialog, ProgressStatus } from "./account/AccountUI";
+import { useAccount } from "@/store/authStore";
 import { LanguageSelector } from "./LanguageSelector";
 import { useMobileLayout } from "@/lib/useMobileLayout";
 import { MobileUI } from "./mobile/MobileUI";
@@ -153,6 +155,7 @@ export function AnatomyApp() {
   const mobile = useMobileLayout();
   const quiz = useQuiz();
   const p = useProgress();
+  const accountUser = useAccount((state) => state.user);
   const [help, setHelp] = useState(false);
   const [area, setArea] = useState(0);
   const mounted = useClientReady();
@@ -160,7 +163,6 @@ export function AnatomyApp() {
   const stage = useRef<HTMLDivElement>(null);
   const showExplore = a.mode === "explore" || a.mode === "dashboard";
   useEffect(() => {
-    void useProgress.persist.rehydrate();
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape" && !document.querySelector("dialog[open]")) {
         useAnatomy.getState().reset();
@@ -214,7 +216,7 @@ export function AnatomyApp() {
         <div className="header-end">
           <LanguageSelector />
           <span className="course-badge">{t("ST2S")}</span>
-          <span className="student-avatar" aria-label={t("Espace élève")}>{t("É ")}</span>
+          <AccountButton compact />
         </div>
       </header>
       <div className="app-body">
@@ -563,7 +565,7 @@ export function AnatomyApp() {
             <span>
               <span className="footer-dot" />{t("Espace d’apprentissage")}<span className="footer-separator">/</span>{t("Le squelette humain ")}</span>
             <span>
-              {mounted && p.storageError
+              {accountUser ? <ProgressStatus /> : mounted && p.storageError
                 ? t("Stockage local indisponible · progression temporaire")
                 : mounted
                   ? t("Progression sauvegardée sur cet appareil")
@@ -581,6 +583,7 @@ export function AnatomyApp() {
           onClick={() => useAnatomy.setState({ indexOpen: false })}
         />
       )}
+      <AccountDialog />
       {help && <Help close={() => setHelp(false)} />}
       {a.modelNotice && (
         <div className="app-notice" role="status">

@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/devices/{deviceId} {
+      function owner() { return request.auth != null && request.auth.uid == userId; }
+      function validProgress() {
+        let data = request.resource.data;
+        return data.keys().hasOnly(['version', 'updatedAt', 'records', 'saved', 'xp', 'sessions', 'favorites'])
+          && data.version == 1
+          && data.updatedAt is number && data.updatedAt >= 0
+          && data.records is map && data.records.size() == 30
+          && data.saved is list && data.saved.size() <= 30
+          && data.xp is number && data.xp >= 0 && data.xp <= 1000000000
+          && data.sessions is list && data.sessions.size() <= 30
+          && data.favorites is map && data.favorites.size() <= 30;
+      }
+      allow read: if owner();
+      allow create, update: if owner() && validProgress();
+      allow delete: if owner();
+    }
+  }
+}
