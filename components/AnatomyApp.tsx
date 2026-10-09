@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { useMobileLayout } from "@/lib/useMobileLayout";
+import { MobileUI } from "./mobile/MobileUI";
 import { useClientReady } from "@/lib/useClientReady";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -56,6 +58,7 @@ const areas: { label: string; target: Vec3; distance: number }[] = [
   { label: "Membres inférieurs", target: [0, 2.3, 0], distance: 7.6 },
 ];
 function Help({ close }: { close: () => void }) {
+  const mobile = useMobileLayout();
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     ref.current?.showModal();
@@ -90,21 +93,21 @@ function Help({ close }: { close: () => void }) {
         <Rotate3D />
         <div>
           <strong>Tourner le squelette</strong>
-          <span>Glisser avec le bouton gauche · un doigt sur tablette</span>
+          <span>{mobile ? "Glisse avec un doigt sur le modèle." : "Glisser avec le bouton gauche · un doigt sur tablette"}</span>
         </div>
       </div>
       <div className="help-row">
         <Search />
         <div>
           <strong>Se rapprocher</strong>
-          <span>Molette ou pincement à deux doigts</span>
+          <span>{mobile ? "Pince avec deux doigts ou utilise + et −." : "Molette ou pincement à deux doigts"}</span>
         </div>
       </div>
       <div className="help-row">
         <Move />
         <div>
           <strong>Déplacer la vue</strong>
-          <span>Glisser avec le bouton droit · deux doigts</span>
+          <span>{mobile ? "Glisse avec deux doigts." : "Glisser avec le bouton droit · deux doigts"}</span>
         </div>
       </div>
       <div className="help-row">
@@ -112,7 +115,7 @@ function Help({ close }: { close: () => void }) {
         <div>
           <strong>Explorer une structure</strong>
           <span>
-            Cliquer pour ouvrir sa fiche · double-cliquer pour l’isoler
+            {mobile ? "Touche un os, puis ouvre sa fiche en bas de l’écran." : "Cliquer pour ouvrir sa fiche · double-cliquer pour l’isoler"}
           </span>
         </div>
       </div>
@@ -120,12 +123,11 @@ function Help({ close }: { close: () => void }) {
         <Maximize />
         <div>
           <strong>Retrouver le squelette entier</strong>
-          <span>Échap ou le bouton Réinitialiser</span>
+          <span>{mobile ? "Vue 3D → Retrouver le squelette entier." : "Échap ou le bouton Réinitialiser"}</span>
         </div>
       </div>
       <p className="help-accessibility">
-        Au clavier, utilise l’index anatomique pour sélectionner une structure.
-        En révision, l’index propose aussi les réponses au clavier.
+        {mobile ? "Choisir un os ouvre la recherche. En révision, la liste permet aussi de répondre sans viser le modèle." : "Au clavier, utilise l’index anatomique pour sélectionner une structure. En révision, l’index propose aussi les réponses au clavier."}
       </p>
       <div className="help-model">
         <Box size={17} />
@@ -152,6 +154,7 @@ function Help({ close }: { close: () => void }) {
 }
 export function AnatomyApp() {
   const a = useAnatomy();
+  const mobile = useMobileLayout();
   const quiz = useQuiz();
   const p = useProgress();
   const [help, setHelp] = useState(false);
@@ -163,7 +166,7 @@ export function AnatomyApp() {
   useEffect(() => {
     void useProgress.persist.rehydrate();
     const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !document.querySelector("dialog[open]")) {
         useAnatomy.getState().reset();
         useAnatomy.setState({ visibilityOpen: false, indexOpen: false });
       }
@@ -196,7 +199,7 @@ export function AnatomyApp() {
   };
   const allHidden = a.hiddenGroups.length === groups.length;
   return (
-    <div className="oscar-app">
+    <div className="oscar-app" data-mode={a.mode}>
       <a className="skip-link" href="#main-view">
         Aller au modèle et aux exercices
       </a>
@@ -596,6 +599,7 @@ export function AnatomyApp() {
           </footer>
         </div>
       </div>
+      {mobile && <MobileUI help={() => setHelp(true)} />}
       {a.indexOpen && (
         <button
           className="index-scrim"

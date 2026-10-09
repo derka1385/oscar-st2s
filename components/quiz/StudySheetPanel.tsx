@@ -1,10 +1,13 @@
 "use client";
 import { FilePenLine, Check, RotateCcw, ChevronRight } from "lucide-react";
+import { useMobileLayout } from "@/lib/useMobileLayout";
+import { MobileSheetAnswers } from "../mobile/MobileSheetAnswers";
 import { useSheet } from "@/store/sheetStore";
 import { useQuiz } from "@/store/quizStore";
 import { useAnatomy } from "@/store/anatomyStore";
 export function StudySheetPanel() {
   const s = useSheet();
+  const mobile = useMobileLayout();
   const correct = Object.values(s.results).filter(Boolean).length;
   const errors = s.ids.filter((id) => !s.results[id]);
   return (
@@ -15,14 +18,9 @@ export function StudySheetPanel() {
           Mode fiche
         </span>
       </div>
-      <h2>
-        Les bons mots,
-        <br />
-        aux bons endroits.
-      </h2>
+      <h2>{mobile ? "À toi de nommer les os" : <>Les bons mots,<br />aux bons endroits.</>}</h2>
       <p>
-        Complète les {s.ids.length} légendes autour d’Oscar, comme sur ta fiche
-        de cours.
+        {mobile ? `Retrouve les ${s.ids.length} repères numérotés sur le squelette.` : `Complète les ${s.ids.length} légendes autour d’Oscar, comme sur ta fiche de cours.`}
       </p>
       <div className="sheet-instruction">
         <strong>Quelques repères</strong>
@@ -38,6 +36,7 @@ export function StudySheetPanel() {
           {s.ids.length}
         </strong>
       </div>
+      {mobile && <MobileSheetAnswers />}
       {!s.corrected ? (
         <button className="primary-button" onClick={() => s.check()}>
           <Check size={16} />

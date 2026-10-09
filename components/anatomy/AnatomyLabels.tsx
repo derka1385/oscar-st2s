@@ -1,4 +1,5 @@
 "use client";
+import { useMobileLayout } from "@/lib/useMobileLayout";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
 import { boneById, labelIds } from "@/data/anatomy/skeleton";
@@ -17,10 +18,10 @@ export class AnnotationBridge {
   setHover(node: HTMLDivElement | null) {
     this.hover = node;
   }
-  place(id: string, x: number, y: number, width: number, points: string) {
+  place(id: string, x: number, y: number, width: number, points: string, offset = 12) {
     const node = this.nodes[id];
     if (node) {
-      node.style.transform = `translate(${x}px, ${y - 12}px)`;
+      node.style.transform = `translate(${x}px, ${y - offset}px)`;
       node.style.width = width + "px";
     }
     this.paths[id]?.setAttribute("points", points);
@@ -34,12 +35,13 @@ export class AnnotationBridge {
 // anatomical anchors each frame. This avoids a separate DOM root per label.
 export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
   const { camera, size } = useThree();
+  const mobile = useMobileLayout();
   useFrame(() => {
     const a = useAnatomy.getState(),
       s = useSheet.getState();
     const isSheet = a.mode === "sheet";
     const ids = isSheet ? s.ids : labelIds;
-    if (isSheet || (a.mode === "explore" && a.labels)) {
+    if (isSheet || (a.mode === "explore" && (mobile ? a.mobileLabels : a.labels))) {
       const rows = ids
         .filter(
           (id) =>
@@ -59,10 +61,10 @@ export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
         const items = rows
           .filter((x) => x.side === side)
           .sort((b, c) => b.y - c.y);
-        const top = 155,
-          bottom = size.height - 135;
+        const top = mobile ? 24 : 155,
+          bottom = size.height - (mobile ? 24 : 135);
         const spacing = Math.min(
-          isSheet ? 56 : 44,
+          mobile && isSheet ? 44 : isSheet ? 56 : 44,
           Math.max(29, (bottom - top) / Math.max(1, items.length - 1)),
         );
         let prev = top - spacing;
@@ -74,7 +76,7 @@ export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
           );
           prev = y;
           const width =
-            size.width < 450 ? (isSheet ? 98 : 79) : isSheet ? 126 : 110;
+            mobile && isSheet ? 44 : size.width < 450 ? (isSheet ? 98 : 79) : isSheet ? 126 : 110;
           const x =
             side === "left"
               ? size.width < 450
@@ -92,6 +94,7 @@ export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
             y,
             width,
             `${startX},${y} ${elbowX},${y} ${r.x},${r.y}`,
+            mobile && isSheet ? 22 : 12,
           );
         }
       }
@@ -108,10 +111,11 @@ export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
 }
 export function AnatomyLabels({ bridge }: { bridge: AnnotationBridge }) {
   const a = useAnatomy();
+  const mobile = useMobileLayout();
   const sheet = useSheet();
   const isSheet = a.mode === "sheet";
   const ids = isSheet ? sheet.ids : labelIds;
-  const visible = isSheet || (a.mode === "explore" && a.labels);
+  const visible = isSheet || (a.mode === "explore" && (mobile ? a.mobileLabels : a.labels));
   return (
     <div className="annotations-overlay">
       {visible && (
@@ -139,7 +143,13 @@ export function AnatomyLabels({ bridge }: { bridge: AnnotationBridge }) {
                 className={"annotation " + (a.selected === id ? "active" : "")}
                 style={{ display: hidden ? "none" : undefined }}
               >
-                {isSheet ? (
+                {isSheet && mobile ? (
+                  <button className="mobile-sheet-pin" aria-label={`Remplir le repère ${i + 1}`} onClick={() => {
+                    const input = document.getElementById("mobile-answer-" + id);
+                    input?.focus();
+                    input?.scrollIntoView({ block: "nearest", behavior: "auto" });
+                  }}>{i + 1}</button>
+                ) : isSheet ? (
                   <label
                     className={
                       sheet.corrected

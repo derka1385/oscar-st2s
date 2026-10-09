@@ -19,6 +19,7 @@ type State = {
   xray: boolean;
   groupColors: boolean;
   labels: boolean;
+  mobileLabels: boolean;
   visibilityOpen: boolean;
   indexOpen: boolean;
   camera: CameraRequest;
@@ -47,6 +48,7 @@ export const useAnatomy = create<State>((set, get) => ({
   xray: false,
   groupColors: false,
   labels: true,
+  mobileLabels: false,
   visibilityOpen: false,
   indexOpen: false,
   camera: { target: [0, 4.0, 0], distance: 16.5, direction: "front", tick: 0 },

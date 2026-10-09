@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useMobileLayout } from "@/lib/useMobileLayout";
 import {
   Search,
   ChevronDown,
@@ -18,6 +19,15 @@ import { useProgress } from "@/store/progressStore";
 import { effectiveMastery } from "@/lib/mastery";
 export function AnatomyTree() {
   const a = useAnatomy();
+  const mobile = useMobileLayout();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const close = () => useAnatomy.setState({ indexOpen: false });
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (mobile && a.indexOpen) { setSearch(""); dialog?.showModal(); }
+    else dialog?.close();
+    return () => dialog?.close();
+  }, [mobile, a.indexOpen]);
   const quiz = useQuiz();
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<string[]>([
@@ -37,14 +47,11 @@ export function AnatomyTree() {
   const count = structures.filter(
     (b) => records[b.id] && effectiveMastery(records[b.id]) >= 75,
   ).length;
-  return (
-    <aside
-      className={"anatomy-index " + (a.indexOpen ? "index-open" : "")}
-      aria-label="Index anatomique"
-    >
+  const content = (<>
       <div className="index-heading">
         <div className="lesson-number">MODULE 2.1</div>
         <button
+          autoFocus={mobile}
           className="icon-button mobile-close"
           aria-label="Fermer l’index"
           onClick={() => useAnatomy.setState({ indexOpen: false })}
@@ -52,9 +59,7 @@ export function AnatomyTree() {
           <X size={18} />
         </button>
         <h2>
-          Organisation et exploration
-          <br />
-          du squelette
+          {mobile ? (isQuiz ? "Choisir une réponse" : "Choisir un os") : <>Organisation et exploration<br />du squelette</>}
         </h2>
         <div className="lesson-meta">
           <span>BPH</span>
@@ -66,7 +71,7 @@ export function AnatomyTree() {
         <Search size={16} />
         <input
           placeholder={
-            isQuiz ? "Choisir un os au clavier…" : "Rechercher un os…"
+            isQuiz ? (mobile ? "Rechercher une réponse…" : "Choisir un os au clavier…") : "Rechercher un os…"
           }
           aria-label="Rechercher une structure"
           value={search}
@@ -82,7 +87,7 @@ export function AnatomyTree() {
         )}
       </div>
       <div className="index-tree-heading">
-        <span>{isQuiz ? "SÉLECTION AU CLAVIER" : "INDEX ANATOMIQUE"}</span>
+        <span>{isQuiz ? (mobile ? "STRUCTURES" : "SÉLECTION AU CLAVIER") : "INDEX ANATOMIQUE"}</span>
         <span>{structures.length}</span>
       </div>
       <div className="tree-scroll">
@@ -158,6 +163,7 @@ export function AnatomyTree() {
                       onClick={() => {
                         if (isQuiz) {
                           quiz.answer(b.id);
+                          if (mobile && question?.type !== "multi") close();
                         } else {
                           if (a.mode === "dashboard") a.setMode("explore");
                           a.select(b.id);
@@ -204,12 +210,13 @@ export function AnatomyTree() {
         <div className="progress-track">
           <i style={{ width: (count / structures.length) * 100 + "%" }} />
         </div>
-        <button className="index-study" onClick={() => quiz.start()}>
+        <button className="index-study" onClick={() => { if (!(mobile && isQuiz)) quiz.start(); if (mobile) close(); }}>
           <BookOpen size={16} />
-          <span>Passer aux révisions</span>
+          <span>{mobile && isQuiz ? "Revenir à la question" : "Passer aux révisions"}</span>
           <ArrowUpRight size={16} />
         </button>
       </div>
-    </aside>
+    </>
   );
+  return mobile ? <dialog ref={dialogRef} className="anatomy-index mobile-index" aria-label="Index anatomique" onCancel={close} onClick={(event) => { if (event.target === dialogRef.current) close(); }}>{content}</dialog> : <aside className={"anatomy-index " + (a.indexOpen ? "index-open" : "")} aria-label="Index anatomique">{content}</aside>;
 }

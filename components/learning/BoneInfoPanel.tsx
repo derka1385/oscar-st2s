@@ -18,7 +18,7 @@ import { useQuiz } from "@/store/quizStore";
 import { boneById } from "@/data/anatomy/skeleton";
 import { groupById } from "@/data/anatomy/groups";
 import { effectiveMastery } from "@/lib/mastery";
-export function BoneInfoPanel() {
+export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
   const a = useAnatomy();
   const p = useProgress();
   const b = a.selected ? boneById[a.selected] : null;
@@ -46,7 +46,7 @@ export function BoneInfoPanel() {
         <button
           className="icon-button mobile-close"
           aria-label="Fermer la fiche"
-          onClick={() => useAnatomy.setState({ selected: null })}
+          onClick={() => onClose ? onClose() : useAnatomy.setState({ selected: null })}
         >
           <X size={16} />
         </button>
@@ -72,7 +72,7 @@ export function BoneInfoPanel() {
             <button
               className="group-badge"
               style={{ "--group-color": g.color } as React.CSSProperties}
-              onClick={() => a.isolate(g.id, "group")}
+              onClick={() => { a.isolate(g.id, "group"); onClose?.(); }}
             >
               <i />
               {g.number && <b>{g.number}</b>}
@@ -111,11 +111,11 @@ export function BoneInfoPanel() {
                 "primary-button " +
                 (a.isolation?.id === b.id ? "is-active" : "")
               }
-              onClick={() =>
-                a.isolation?.id === b.id
-                  ? useAnatomy.setState({ isolation: null })
-                  : a.isolate(b.id)
-              }
+              onClick={() => {
+                if (a.isolation?.id === b.id) useAnatomy.setState({ isolation: null });
+                else a.isolate(b.id);
+                onClose?.();
+              }}
             >
               <Scan size={16} />
               {a.isolation?.id === b.id
@@ -123,13 +123,13 @@ export function BoneInfoPanel() {
                 : "Isoler la structure"}
             </button>
             <div className="split-actions">
-              <button className="secondary-button" onClick={() => a.hide(b.id)}>
+              <button className="secondary-button" onClick={() => { a.hide(b.id); onClose?.(); }}>
                 <EyeOff size={15} />
                 Masquer
               </button>
               <button
                 className="secondary-button"
-                onClick={() => a.setCamera(b.anchor, 4.5)}
+                onClick={() => { a.setCamera(b.anchor, 4.5); onClose?.(); }}
               >
                 <Focus size={15} />
                 Centrer
@@ -137,7 +137,7 @@ export function BoneInfoPanel() {
             </div>
             <button
               className="text-button view-skeleton"
-              onClick={() => a.reset()}
+              onClick={() => { a.reset(); onClose?.(); }}
             >
               Voir dans le squelette
               <ChevronRight size={14} />
@@ -152,7 +152,7 @@ export function BoneInfoPanel() {
           </div>
           <button
             className="group-context"
-            onClick={() => a.isolate(g.id, "group")}
+            onClick={() => { a.isolate(g.id, "group"); onClose?.(); }}
           >
             <Layers size={16} />
             <span>
@@ -188,7 +188,7 @@ export function BoneInfoPanel() {
           {saved && (
             <button
               className="text-button"
-              onClick={() => useQuiz.getState().start(p.saved)}
+              onClick={() => { useQuiz.getState().start(p.saved); onClose?.(); }}
             >
               Réviser ma sélection ({p.saved.length})<ChevronRight size={14} />
             </button>
