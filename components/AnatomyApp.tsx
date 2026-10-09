@@ -1,5 +1,7 @@
 "use client";
+import { useI18n } from "@/lib/useI18n";
 import Link from "next/link";
+import { LanguageSelector } from "./LanguageSelector";
 import { useMobileLayout } from "@/lib/useMobileLayout";
 import { MobileUI } from "./mobile/MobileUI";
 import { useClientReady } from "@/lib/useClientReady";
@@ -41,8 +43,7 @@ import { useAnatomy, type CameraRequest } from "@/store/anatomyStore";
 import { useQuiz } from "@/store/quizStore";
 import { useProgress } from "@/store/progressStore";
 import { useSheet } from "@/store/sheetStore";
-import { groups } from "@/data/anatomy/groups";
-import { boneById, type Vec3 } from "@/data/anatomy/skeleton";
+import { type Vec3 } from "@/data/anatomy/skeleton";
 const views: { label: string; direction: CameraRequest["direction"] }[] = [
   { label: "Face", direction: "front" },
   { label: "Dos", direction: "back" },
@@ -58,6 +59,7 @@ const areas: { label: string; target: Vec3; distance: number }[] = [
   { label: "Membres inférieurs", target: [0, 2.3, 0], distance: 7.6 },
 ];
 function Help({ close }: { close: () => void }) {
+  const { t } = useI18n();
   const mobile = useMobileLayout();
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -78,81 +80,75 @@ function Help({ close }: { close: () => void }) {
       }}
     >
       <div className="popover-heading">
-        <h2>Prendre Oscar en main</h2>
+        <h2>{t("Prendre Oscar en main")}</h2>
         <button
           className="icon-button"
           autoFocus
-          aria-label="Fermer l’aide"
+          aria-label={t("Fermer l’aide")}
           onClick={close}
         >
           <X size={19} />
         </button>
       </div>
-      <p>Observe, manipule et apprends à ton rythme.</p>
+      <p>{t("Observe, manipule et apprends à ton rythme.")}</p>
       <div className="help-row">
         <Rotate3D />
         <div>
-          <strong>Tourner le squelette</strong>
-          <span>{mobile ? "Glisse avec un doigt sur le modèle." : "Glisser avec le bouton gauche · un doigt sur tablette"}</span>
+          <strong>{t("Tourner le squelette")}</strong>
+          <span>{mobile ? t("Glisse avec un doigt sur le modèle.") : t("Glisser avec le bouton gauche · un doigt sur tablette")}</span>
         </div>
       </div>
       <div className="help-row">
         <Search />
         <div>
-          <strong>Se rapprocher</strong>
-          <span>{mobile ? "Pince avec deux doigts ou utilise + et −." : "Molette ou pincement à deux doigts"}</span>
+          <strong>{t("Se rapprocher")}</strong>
+          <span>{mobile ? t("Pince avec deux doigts ou utilise + et −.") : t("Molette ou pincement à deux doigts")}</span>
         </div>
       </div>
       <div className="help-row">
         <Move />
         <div>
-          <strong>Déplacer la vue</strong>
-          <span>{mobile ? "Glisse avec deux doigts." : "Glisser avec le bouton droit · deux doigts"}</span>
+          <strong>{t("Déplacer la vue")}</strong>
+          <span>{mobile ? t("Glisse avec deux doigts.") : t("Glisser avec le bouton droit · deux doigts")}</span>
         </div>
       </div>
       <div className="help-row">
         <MousePointer2 />
         <div>
-          <strong>Explorer une structure</strong>
+          <strong>{t("Explorer une structure")}</strong>
           <span>
-            {mobile ? "Touche un os, puis ouvre sa fiche en bas de l’écran." : "Cliquer pour ouvrir sa fiche · double-cliquer pour l’isoler"}
+            {mobile ? t("Touche un os, puis ouvre sa fiche en bas de l’écran.") : t("Cliquer pour ouvrir sa fiche · double-cliquer pour l’isoler")}
           </span>
         </div>
       </div>
       <div className="help-row">
         <Maximize />
         <div>
-          <strong>Retrouver le squelette entier</strong>
-          <span>{mobile ? "Vue 3D → Retrouver le squelette entier." : "Échap ou le bouton Réinitialiser"}</span>
+          <strong>{t("Retrouver le squelette entier")}</strong>
+          <span>{mobile ? t("Vue 3D → Retrouver le squelette entier.") : t("Échap ou le bouton Réinitialiser")}</span>
         </div>
       </div>
       <p className="help-accessibility">
-        {mobile ? "Choisir un os ouvre la recherche. En révision, la liste permet aussi de répondre sans viser le modèle." : "Au clavier, utilise l’index anatomique pour sélectionner une structure. En révision, l’index propose aussi les réponses au clavier."}
+        {mobile ? t("Choisir un os ouvre la recherche. En révision, la liste permet aussi de répondre sans viser le modèle.") : t("Au clavier, utilise l’index anatomique pour sélectionner une structure. En révision, l’index propose aussi les réponses au clavier.")}
       </p>
       <div className="help-model">
         <Box size={17} />
-        <p>
-          Oscar utilise les maillages anatomiques BodyParts3D. Le coccyx et la
-          symphyse pubienne sont schématisés. Les zones de sélection de
-          l’ilium, de l’ischion et du pubis sont approximatives sur l’os coxal fusionné.
-        </p>
+        <p>{t("Oscar utilise les maillages anatomiques BodyParts3D. Le coccyx et la symphyse pubienne sont schématisés. Les zones de sélection de l’ilium, de l’ischion et du pubis sont approximatives sur l’os coxal fusionné. ")}</p>
       </div>
-      <a href="/models/ATTRIBUTION.md" target="_blank" rel="noreferrer" className="text-button">
-        Modèle 3D : sources et licence <ArrowUpRight size={14} />
+      <a href="/models/ATTRIBUTION.md" target="_blank" rel="noreferrer" className="text-button">{t("Modèle 3D : sources et licence ")}<ArrowUpRight size={14} />
       </a>
       <a
         href="https://openstax.org/books/anatomy-and-physiology-2e/pages/7-1-divisions-of-the-skeletal-system"
         target="_blank"
         rel="noreferrer"
         className="text-button"
-      >
-        Référence anatomique : OpenStax
-        <ArrowUpRight size={14} />
+      >{t("Référence anatomique : OpenStax ")}<ArrowUpRight size={14} />
       </a>
     </dialog>
   );
 }
 export function AnatomyApp() {
+  const { t, groups, boneById, prompt } = useI18n();
   const a = useAnatomy();
   const mobile = useMobileLayout();
   const quiz = useQuiz();
@@ -200,45 +196,41 @@ export function AnatomyApp() {
   const allHidden = a.hiddenGroups.length === groups.length;
   return (
     <div className="oscar-app" data-mode={a.mode}>
-      <a className="skip-link" href="#main-view">
-        Aller au modèle et aux exercices
-      </a>
+      <a className="skip-link" href="#main-view">{t("Aller au modèle et aux exercices ")}</a>
       <header className="app-header">
-        <Link className="brand" href="/" aria-label="Oscar, accueil">
+        <Link className="brand" href="/" aria-label={t("Oscar, accueil")}>
           <span className="brand-mark">
             <i />
             <i />
-          </span>
-          oscar<span className="brand-dot">.</span>
+          </span>{t("oscar")}<span className="brand-dot">.</span>
         </Link>
         <div className="breadcrumb">
-          <span>Bibliothèque</span>
+          <span>{t("Bibliothèque")}</span>
           <ChevronRight size={13} />
-          <span>Biologie & physiopathologie humaines</span>
+          <span>{t("Biologie & physiopathologie humaines")}</span>
           <ChevronRight size={13} />
-          <strong>Le squelette humain</strong>
+          <strong>{t("Le squelette humain")}</strong>
         </div>
         <div className="header-end">
-          <span className="course-badge">ST2S</span>
-          <span className="student-avatar" aria-label="Espace élève">
-            É
-          </span>
+          <LanguageSelector />
+          <span className="course-badge">{t("ST2S")}</span>
+          <span className="student-avatar" aria-label={t("Espace élève")}>{t("É ")}</span>
         </div>
       </header>
       <div className="app-body">
-        <nav className="nav-rail" aria-label="Navigation principale">
+        <nav className="nav-rail" aria-label={t("Navigation principale")}>
           <div>
             <button
-              title="Explorer"
-              aria-label="Explorer"
+              title={t("Explorer")}
+              aria-label={t("Explorer")}
               className={a.mode === "explore" ? "active" : ""}
               onClick={() => a.setMode("explore")}
             >
               <BookOpen size={21} />
             </button>
             <button
-              title="Réviser"
-              aria-label="Réviser"
+              title={t("Réviser")}
+              aria-label={t("Réviser")}
               className={
                 a.mode === "quiz" || a.mode === "sheet" ? "active" : ""
               }
@@ -247,8 +239,8 @@ export function AnatomyApp() {
               <Layers3 size={21} />
             </button>
             <button
-              title="Ma progression"
-              aria-label="Ma progression"
+              title={t("Ma progression")}
+              aria-label={t("Ma progression")}
               className={a.mode === "dashboard" ? "active" : ""}
               onClick={() => a.setMode("dashboard")}
             >
@@ -257,13 +249,13 @@ export function AnatomyApp() {
           </div>
           <div className="rail-bottom">
             <button
-              title="Aide et raccourcis"
-              aria-label="Aide et raccourcis"
+              title={t("Aide et raccourcis")}
+              aria-label={t("Aide et raccourcis")}
               onClick={() => setHelp(true)}
             >
               <CircleHelp size={21} />
             </button>
-            <span className="rail-version">v.01</span>
+            <span className="rail-version">{t("v.01")}</span>
           </div>
         </nav>
         <AnatomyTree />
@@ -272,7 +264,7 @@ export function AnatomyApp() {
             <div>
               <button
                 className="index-toggle icon-button"
-                aria-label="Ouvrir l’index anatomique"
+                aria-label={t("Ouvrir l’index anatomique")}
                 onClick={() => useAnatomy.setState({ indexOpen: !a.indexOpen })}
               >
                 {a.indexOpen ? (
@@ -282,16 +274,15 @@ export function AnatomyApp() {
                 )}
               </button>
               <div>
-                <div className="workspace-breadcrumb">ANATOMIE INTERACTIVE</div>
-                <h1>
-                  Le squelette humain<span className="lesson-pill">2.1</span>
+                <div className="workspace-breadcrumb">{t("ANATOMIE INTERACTIVE")}</div>
+                <h1>{t("Le squelette humain")}<span className="lesson-pill">2.1</span>
                 </h1>
               </div>
             </div>
             <div
               className="learning-tabs"
               role="tablist"
-              aria-label="Mode d’apprentissage"
+              aria-label={t("Mode d’apprentissage")}
             >
               <button
                 role="tab"
@@ -299,18 +290,14 @@ export function AnatomyApp() {
                 className={showExplore ? "active" : ""}
                 onClick={() => a.setMode("explore")}
               >
-                <Box size={15} />
-                Explorer
-              </button>
+                <Box size={15} />{t("Explorer ")}</button>
               <button
                 role="tab"
                 aria-selected={a.mode === "quiz" || a.mode === "sheet"}
                 className={!showExplore ? "active" : ""}
                 onClick={() => quiz.start()}
               >
-                <Sparkles size={15} />
-                Réviser
-              </button>
+                <Sparkles size={15} />{t("Réviser ")}</button>
             </div>
           </div>
           <main id="main-view" className="main-view">
@@ -322,7 +309,7 @@ export function AnatomyApp() {
                       "stage-tool " +
                       (a.labels && a.mode === "explore" ? "active" : "")
                     }
-                    title="Afficher les légendes"
+                    title={t("Afficher les légendes")}
                     aria-pressed={a.labels && a.mode === "explore"}
                     disabled={!showExplore}
                     onClick={() => {
@@ -331,7 +318,7 @@ export function AnatomyApp() {
                     }}
                   >
                     <Tags size={16} />
-                    <span>Légendes</span>
+                    <span>{t("Légendes")}</span>
                   </button>
                   <span className="tool-divider" />
                   <button
@@ -343,7 +330,7 @@ export function AnatomyApp() {
                     }
                   >
                     <Layers3 size={16} />
-                    <span>Voir les groupes</span>
+                    <span>{t("Voir les groupes")}</span>
                   </button>
                 </div>
                 <button
@@ -354,22 +341,21 @@ export function AnatomyApp() {
                   onClick={sheet}
                 >
                   <FilePenLine size={16} />
-                  <span>Mode fiche</span>
+                  <span>{t("Mode fiche")}</span>
                 </button>
               </div>
               <div className="model-caption">
-                <strong>
-                  Oscar<span className="model-status">3D</span>
+                <strong>{t("Oscar")}<span className="model-status">{t("3D")}</span>
                 </strong>
                 <span>
                   {views.find((v) => v.direction === a.camera.direction)
                     ?.label === "Face"
-                    ? "Vue antérieure"
+                    ? t("Vue antérieure")
                     : views.find((v) => v.direction === a.camera.direction)
                           ?.label === "Dos"
-                      ? "Vue postérieure"
+                      ? t("Vue postérieure")
                       : views.find((v) => v.direction === a.camera.direction)
-                          ?.label}
+                          ?.label ? t(views.find((v) => v.direction === a.camera.direction)!.label) : ""}
                 </span>
               </div>
               <div className="visibility-control">
@@ -378,8 +364,8 @@ export function AnatomyApp() {
                     "visibility-trigger icon-button " +
                     (a.visibilityOpen ? "active" : "")
                   }
-                  title="Visibilité des structures"
-                  aria-label="Visibilité des structures"
+                  title={t("Visibilité des structures")}
+                  aria-label={t("Visibilité des structures")}
                   aria-expanded={a.visibilityOpen}
                   disabled={!showExplore}
                   onClick={() =>
@@ -396,10 +382,8 @@ export function AnatomyApp() {
               {allHidden && (
                 <div className="hidden-notice">
                   <Box size={22} />
-                  <strong>Toutes les régions sont masquées.</strong>
-                  <button className="primary-button" onClick={() => a.reset()}>
-                    Tout afficher
-                  </button>
+                  <strong>{t("Toutes les régions sont masquées.")}</strong>
+                  <button className="primary-button" onClick={() => a.reset()}>{t("Tout afficher ")}</button>
                 </div>
               )}
               {a.mode === "quiz" &&
@@ -407,13 +391,13 @@ export function AnatomyApp() {
                 quiz.questions[quiz.index] && (
                   <div className="model-quiz-prompt">
                     <span>{quiz.index + 1}</span>
-                    {quiz.questions[quiz.index].prompt}
+                    {prompt(quiz.questions[quiz.index])}
                   </div>
                 )}
               <div className="zoom-controls">
                 <button
-                  aria-label="Zoomer"
-                  title="Zoomer"
+                  aria-label={t("Zoomer")}
+                  title={t("Zoomer")}
                   onClick={() =>
                     window.dispatchEvent(
                       new CustomEvent("oscar-zoom", { detail: 0.8 }),
@@ -423,8 +407,8 @@ export function AnatomyApp() {
                   <Plus size={18} />
                 </button>
                 <button
-                  aria-label="Dézoomer"
-                  title="Dézoomer"
+                  aria-label={t("Dézoomer")}
+                  title={t("Dézoomer")}
                   onClick={() =>
                     window.dispatchEvent(
                       new CustomEvent("oscar-zoom", { detail: 1.2 }),
@@ -435,8 +419,8 @@ export function AnatomyApp() {
                 </button>
                 <span />
                 <button
-                  aria-label="Réinitialiser la vue"
-                  title="Réinitialiser la vue"
+                  aria-label={t("Réinitialiser la vue")}
+                  title={t("Réinitialiser la vue")}
                   onClick={() => {
                     a.reset();
                     setArea(0);
@@ -446,9 +430,9 @@ export function AnatomyApp() {
                 </button>
                 <button
                   aria-label={
-                    fullscreen ? "Quitter le plein écran" : "Plein écran"
+                    fullscreen ? t("Quitter le plein écran") : t("Plein écran")
                   }
-                  title="Plein écran"
+                  title={t("Plein écran")}
                   onClick={async () => {
                     try {
                       if (document.fullscreenElement)
@@ -503,21 +487,17 @@ export function AnatomyApp() {
                       onClick={() =>
                         a.isolate(boneById[a.isolation!.id].category, "group")
                       }
-                    >
-                      Afficher le groupe
-                    </button>
+                    >{t("Afficher le groupe ")}</button>
                   )}
                   <button onClick={() => a.reset()}>
-                    <RotateCcw size={13} />
-                    Réinitialiser
-                  </button>
+                    <RotateCcw size={13} />{t("Réinitialiser ")}</button>
                 </div>
               )}
               <div className="camera-presets">
                 <div
                   className="view-buttons"
                   role="group"
-                  aria-label="Orientation de la caméra"
+                  aria-label={t("Orientation de la caméra")}
                 >
                   {views.map((v) => (
                     <button
@@ -534,13 +514,13 @@ export function AnatomyApp() {
                         )
                       }
                     >
-                      {v.label}
+                      {t(v.label)}
                     </button>
                   ))}
                 </div>
                 <label className="area-select">
                   <select
-                    aria-label="Zone à observer"
+                    aria-label={t("Zone à observer")}
                     value={area}
                     onChange={(e) => {
                       const i = Number(e.target.value);
@@ -550,7 +530,7 @@ export function AnatomyApp() {
                   >
                     {areas.map((v, i) => (
                       <option value={i} key={v.label}>
-                        {v.label}
+                        {t(v.label)}
                       </option>
                     ))}
                   </select>
@@ -559,15 +539,12 @@ export function AnatomyApp() {
               </div>
               <div className="stage-bottom">
                 <span>
-                  <MousePointer2 size={12} />
-                  Glisser pour tourner<span className="hint-dot">·</span>Molette
-                  pour zoomer
-                </span>
+                  <MousePointer2 size={12} />{t("Glisser pour tourner")}<span className="hint-dot">·</span>{t("Molette pour zoomer ")}</span>
                 <button onClick={() => setHelp(true)}>
                   <Box size={12} />
                   {a.modelKind === "glb"
-                    ? "Modèle anatomique"
-                    : a.modelKind === "error" ? "Modèle indisponible" : "Chargement du modèle…"}
+                    ? t("Modèle anatomique")
+                    : a.modelKind === "error" ? t("Modèle indisponible") : t("Chargement du modèle…")}
                   <CircleHelp size={12} />
                 </button>
               </div>
@@ -584,16 +561,13 @@ export function AnatomyApp() {
           </main>
           <footer className="workspace-footer">
             <span>
-              <span className="footer-dot" />
-              Espace d’apprentissage<span className="footer-separator">/</span>
-              Le squelette humain
-            </span>
+              <span className="footer-dot" />{t("Espace d’apprentissage")}<span className="footer-separator">/</span>{t("Le squelette humain ")}</span>
             <span>
               {mounted && p.storageError
-                ? "Stockage local indisponible · progression temporaire"
+                ? t("Stockage local indisponible · progression temporaire")
                 : mounted
-                  ? "Progression sauvegardée sur cet appareil"
-                  : "Préparation de votre espace…"}
+                  ? t("Progression sauvegardée sur cet appareil")
+                  : t("Préparation de votre espace…")}
               <Check size={12} />
             </span>
           </footer>
@@ -603,16 +577,16 @@ export function AnatomyApp() {
       {a.indexOpen && (
         <button
           className="index-scrim"
-          aria-label="Fermer l’index"
+          aria-label={t("Fermer l’index")}
           onClick={() => useAnatomy.setState({ indexOpen: false })}
         />
       )}
       {help && <Help close={() => setHelp(false)} />}
       {a.modelNotice && (
         <div className="app-notice" role="status">
-          {a.modelNotice}
+          {t(a.modelNotice.replace(/^(\d+) maillages non associés ont été ignorés\.$/, "{count} maillages non associés ont été ignorés."), { count: a.modelNotice.match(/^\d+/)?.[0] ?? "" })}
           <button
-            aria-label="Fermer"
+            aria-label={t("Fermer")}
             onClick={() => useAnatomy.setState({ modelNotice: null })}
           >
             <X size={15} />

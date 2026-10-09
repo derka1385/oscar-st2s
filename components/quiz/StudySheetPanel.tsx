@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/lib/useI18n";
 import { FilePenLine, Check, RotateCcw, ChevronRight } from "lucide-react";
 import { useMobileLayout } from "@/lib/useMobileLayout";
 import { MobileSheetAnswers } from "../mobile/MobileSheetAnswers";
@@ -6,6 +7,7 @@ import { useSheet } from "@/store/sheetStore";
 import { useQuiz } from "@/store/quizStore";
 import { useAnatomy } from "@/store/anatomyStore";
 export function StudySheetPanel() {
+  const { t } = useI18n();
   const s = useSheet();
   const mobile = useMobileLayout();
   const correct = Object.values(s.results).filter(Boolean).length;
@@ -14,23 +16,18 @@ export function StudySheetPanel() {
     <aside className="detail-panel sheet-panel">
       <div className="panel-topline">
         <span>
-          <FilePenLine size={16} />
-          Mode fiche
-        </span>
+          <FilePenLine size={16} />{t("Mode fiche ")}</span>
       </div>
-      <h2>{mobile ? "À toi de nommer les os" : <>Les bons mots,<br />aux bons endroits.</>}</h2>
+      <h2>{mobile ? t("À toi de nommer les os") : <>{t("Les bons mots,")}<br />{t("aux bons endroits.")}</>}</h2>
       <p>
-        {mobile ? `Retrouve les ${s.ids.length} repères numérotés sur le squelette.` : `Complète les ${s.ids.length} légendes autour d’Oscar, comme sur ta fiche de cours.`}
+        {mobile ? t("Retrouve les {count} repères numérotés sur le squelette.", { count: s.ids.length }) : t("Complète les {count} légendes autour d’Oscar, comme sur ta fiche de cours.", { count: s.ids.length })}
       </p>
       <div className="sheet-instruction">
-        <strong>Quelques repères</strong>
-        <p>
-          La vue de face te permet de retrouver les principales structures. Les
-          anciens noms des os sont aussi acceptés.
-        </p>
+        <strong>{t("Quelques repères")}</strong>
+        <p>{t("La vue de face te permet de retrouver les principales structures. Les anciens noms des os sont aussi acceptés. ")}</p>
       </div>
       <div className="sheet-count">
-        <span>Légendes complétées</span>
+        <span>{t("Légendes complétées")}</span>
         <strong>
           {s.ids.filter((id) => !!s.answers[id]?.trim()).length} /{" "}
           {s.ids.length}
@@ -39,9 +36,7 @@ export function StudySheetPanel() {
       {mobile && <MobileSheetAnswers />}
       {!s.corrected ? (
         <button className="primary-button" onClick={() => s.check()}>
-          <Check size={16} />
-          Corriger ma fiche
-        </button>
+          <Check size={16} />{t("Corriger ma fiche ")}</button>
       ) : (
         <>
           <div
@@ -52,12 +47,11 @@ export function StudySheetPanel() {
             role="status"
           >
             <strong>
-              {correct} / {s.ids.length} bonnes réponses
-            </strong>
+              {t("{correct} / {total} bonnes réponses", { correct, total: s.ids.length })}</strong>
             <p>
               {correct === s.ids.length
-                ? "Tous les repères sont en place. Bravo !"
-                : "Les corrections sont affichées sous chaque légende."}
+                ? t("Tous les repères sont en place. Bravo !")
+                : t("Les corrections sont affichées sous chaque légende.")}
             </p>
           </div>
           {errors.length > 0 && (
@@ -65,13 +59,9 @@ export function StudySheetPanel() {
               className="primary-button"
               onClick={() => useQuiz.getState().start(errors)}
             >
-              <RotateCcw size={16} />
-              Réviser mes erreurs
-            </button>
+              <RotateCcw size={16} />{t("Réviser mes erreurs ")}</button>
           )}
-          <button className="secondary-button" onClick={() => s.restart()}>
-            Recommencer la fiche
-          </button>
+          <button className="secondary-button" onClick={() => s.restart()}>{t("Recommencer la fiche ")}</button>
         </>
       )}
       <button
@@ -80,13 +70,9 @@ export function StudySheetPanel() {
           useAnatomy.getState().setMode("explore");
           useAnatomy.getState().reset();
         }}
-      >
-        Retour à l’exploration
-        <ChevronRight size={15} />
+      >{t("Retour à l’exploration ")}<ChevronRight size={15} />
       </button>
-      <div className="local-note">
-        Tes réponses contribuent à ta progression.
-      </div>
+      <div className="local-note">{t("Tes réponses contribuent à ta progression. ")}</div>
     </aside>
   );
 }

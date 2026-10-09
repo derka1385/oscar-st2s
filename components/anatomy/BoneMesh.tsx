@@ -1,10 +1,10 @@
 "use client";
+import { boneById } from "@/data/anatomy/skeleton";
+import { groupById } from "@/data/anatomy/groups";
 import { memo } from "react";
 import { type ThreeEvent } from "@react-three/fiber";
 import { useAnatomy } from "@/store/anatomyStore";
 import { useQuiz } from "@/store/quizStore";
-import { boneById } from "@/data/anatomy/skeleton";
-import { groupById } from "@/data/anatomy/groups";
 import type { ModelPart } from "./proceduralGeometry";
 export const BoneMesh = memo(function BoneMesh({
   id,

@@ -124,3 +124,50 @@ assert(useQuiz.getState().questions.every((q) => q.targetId === firstTarget));
 console.log(
   "Session integration passed: retries, all exercises, duplicate submission protection, XP consistency, completion, local persistence and error-only review.",
 );
+
+// Cyrillic answers must remain distinct after normalization; both vocabularies work.
+const { ukrainianBones, ukrainianGroups } = await import("@/data/anatomy/uk");
+const { anatomyContent, questionPrompt, feedbackMessage, translate } = await import("./i18n");
+const { matchesSearch } = await import("@/data/anatomy/skeleton");
+assert.deepEqual(Object.keys(ukrainianBones).sort(), structures.map((b) => b.id).sort());
+assert.equal(Object.keys(ukrainianGroups).length, 7);
+for (const bone of structures) {
+  const uk = ukrainianBones[bone.id];
+  assert(uk.description && uk.fact);
+  assert(matchesTerm(bone.id, uk.name.toLocaleUpperCase("uk")));
+  assert.deepEqual(anatomyContent.uk.boneById[bone.id].modelMeshNames, bone.modelMeshNames);
+  assert.deepEqual(anatomyContent.uk.boneById[bone.id].anchor, bone.anchor);
+}
+assert(!matchesTerm("femur", "Череп"));
+assert(!matchesTerm("crane", "Стегнова кістка"));
+assert(!matchesTerm("femur", "???"));
+assert(matchesTerm("carpe", "зап'ясток"));
+assert(matchesSearch("ulna", "cubitus"));
+assert(matchesSearch("ulna", "ЛІКТЬОВА"));
+assert(!matchesSearch("ulna", "Череп"));
+for (const question of questions) {
+  assert(/[А-Яа-яІіЇїЄєҐґ]/.test(questionPrompt(question, "uk")));
+  assert(/[А-Яа-яІіЇїЄєҐґ]/.test(feedbackMessage(question, true, "uk")));
+  assert(/[А-Яа-яІіЇїЄєҐґ]/.test(feedbackMessage(question, false, "uk")));
+  assert(!questionPrompt(question, "uk").includes("{name}"));
+}
+assert.equal(translate("Localise : {name}.", "fr", { name: "le fémur" }), "Localise : le fémur.");
+const { useLocale, localeStorageKey } = await import("@/store/localeStore");
+const { useSheet } = await import("@/store/sheetStore");
+useSheet.getState().setAnswer(useSheet.getState().ids[0], "Череп");
+const currentQuiz = useQuiz.getState();
+const currentProgress = useProgress.getState();
+const currentSheet = useSheet.getState();
+useLocale.getState().setLocale("uk");
+assert.equal(memory.get(localeStorageKey), "uk");
+assert.equal(useQuiz.getState(), currentQuiz);
+assert.equal(useProgress.getState(), currentProgress);
+assert.equal(useSheet.getState(), currentSheet);
+useLocale.setState({ locale: "fr" });
+useLocale.getState().hydrate();
+assert.equal(useLocale.getState().locale, "uk");
+memory.set(localeStorageKey, "invalid");
+useLocale.setState({ locale: "fr" });
+useLocale.getState().hydrate();
+assert.equal(useLocale.getState().locale, "fr");
+console.log("Ukrainian checks passed: 30 translations, Cyrillic matching, bilingual search, localized exercises, saved language and unchanged session/progress/answers.");

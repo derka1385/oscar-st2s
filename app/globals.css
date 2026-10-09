@@ -2985,3 +2985,34 @@ button:active:not(:disabled) {
 @media (max-width: 767px) and (max-height: 500px) {
   .oscar-app[data-mode="sheet"] .stage { min-height: 0; }
 }
+
+.language-selector { display: inline-flex; align-items: center; position: relative; flex-shrink: 0; color: var(--green); border: 1px solid var(--line); border-radius: 8px; background: #f7f8f4; height: 40px; padding: 0 10px; gap: 7px; }
+.language-selector select { appearance: none; background: transparent; color: inherit; font: inherit; font-size: 14px; border: 0; padding: 9px 20px 9px 0; cursor: pointer; width: 111px; outline-offset: 4px; }
+.language-selector > svg:last-child { position: absolute; right: 10px; pointer-events: none; }
+html[lang="uk"] .annotation > button { white-space: normal; overflow-wrap: anywhere; line-height: 1.2; }
+html[lang="uk"] .annotation small { white-space: normal; line-height: 1.2; }
+@media (min-width: 768px) {
+  .header-end { gap: 14px; }
+  .breadcrumb { min-width: 0; overflow: hidden; }
+  .breadcrumb > span { overflow: hidden; text-overflow: ellipsis; }
+  .breadcrumb strong { flex-shrink: 0; }
+}
+@media (max-width: 767px) {
+  .app-header { gap: 8px; }
+  .app-header .course-badge { display: none; }
+  .language-selector { height: 44px; padding: 0 8px; gap: 5px; }
+  .language-selector select { font-size: 16px; width: 117px; padding-right: 18px; }
+  .language-selector > svg:first-child { width: 15px; }
+  .language-selector > svg:last-child { right: 8px; }
+  .mobile-search { min-width: 0; }
+  .mobile-search > span { white-space: normal; line-height: 1.15; }
+  .mobile-view { flex-shrink: 0; }
+  .mobile-bone-summary > span:nth-child(2) { min-width: 0; }
+  .mobile-bone-summary strong { overflow-wrap: anywhere; }
+  .mobile-read { flex-shrink: 0; margin-left: auto; }
+  html[lang="uk"] .mobile-navigation button span { font-size: 11px; }
+}
+@media (max-width: 359px) {
+  .app-header .brand-mark { display: none; }
+  .app-header .brand { font-size: 24px; }
+}

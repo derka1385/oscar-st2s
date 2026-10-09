@@ -1,4 +1,5 @@
 import { groupById, type GroupId } from "./groups";
+import { ukrainianBones } from "./uk";
 import modelAnchors from "./model-anchors.json";
 export type Vec3 = [number, number, number];
 export type AnatomyStructure = {
@@ -402,11 +403,20 @@ export function normalizeTerm(s: string) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
+    .replace(/[^\p{L}\p{N}]/gu, "");
 }
 export function matchesTerm(id: string, term: string) {
   const b = boneById[id];
-  return [b.name, ...b.aliases].some(
-    (n) => normalizeTerm(n) === normalizeTerm(term),
-  );
+  const normalized = normalizeTerm(term);
+  if (!normalized) return false;
+  const uk = ukrainianBones[id];
+  return [b.name, ...b.aliases, uk.name, ...uk.aliases].some((name) => normalizeTerm(name) === normalized);
+}
+
+/** Search both vocabularies, even when the interface uses the other language. */
+export function matchesSearch(id: string, query: string) {
+  const bone = boneById[id];
+  if (!bone) return false;
+  const uk = ukrainianBones[id];
+  return [bone.name, ...bone.aliases, uk.name, ...uk.aliases].some((name) => normalizeTerm(name).includes(normalizeTerm(query)));
 }

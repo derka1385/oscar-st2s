@@ -1,4 +1,6 @@
 "use client";
+import { useLocale } from "@/store/localeStore";
+import { useI18n } from "@/lib/useI18n";
 import { useMobileLayout } from "@/lib/useMobileLayout";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
@@ -35,6 +37,7 @@ export class AnnotationBridge {
 // anatomical anchors each frame. This avoids a separate DOM root per label.
 export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
   const { camera, size } = useThree();
+  const locale = useLocale((state) => state.locale);
   const mobile = useMobileLayout();
   useFrame(() => {
     const a = useAnatomy.getState(),
@@ -76,7 +79,7 @@ export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
           );
           prev = y;
           const width =
-            mobile && isSheet ? 44 : size.width < 450 ? (isSheet ? 98 : 79) : isSheet ? 126 : 110;
+            mobile && isSheet ? 44 : size.width < 450 ? (isSheet ? 98 : locale === "uk" ? 100 : 79) : isSheet ? (locale === "uk" ? 154 : 126) : locale === "uk" ? 140 : 110;
           const x =
             side === "left"
               ? size.width < 450
@@ -110,6 +113,7 @@ export function AnnotationProjector({ bridge }: { bridge: AnnotationBridge }) {
   return null;
 }
 export function AnatomyLabels({ bridge }: { bridge: AnnotationBridge }) {
+  const { t, boneById } = useI18n();
   const a = useAnatomy();
   const mobile = useMobileLayout();
   const sheet = useSheet();
@@ -144,7 +148,7 @@ export function AnatomyLabels({ bridge }: { bridge: AnnotationBridge }) {
                 style={{ display: hidden ? "none" : undefined }}
               >
                 {isSheet && mobile ? (
-                  <button className="mobile-sheet-pin" aria-label={`Remplir le repère ${i + 1}`} onClick={() => {
+                  <button className="mobile-sheet-pin" aria-label={t("Remplir le repère {number}", { number: i + 1 })} onClick={() => {
                     const input = document.getElementById("mobile-answer-" + id);
                     input?.focus();
                     input?.scrollIntoView({ block: "nearest", behavior: "auto" });
@@ -161,14 +165,14 @@ export function AnatomyLabels({ bridge }: { bridge: AnnotationBridge }) {
                   >
                     <span>{i + 1}</span>
                     <input
-                      aria-label={`Légende ${i + 1}`}
-                      placeholder="Nom de l’os…"
+                      aria-label={t("Légende {number}", { number: i + 1 })}
+                      placeholder={t("Nom de l’os…")}
                       value={sheet.answers[id] ?? ""}
                       onChange={(e) => sheet.setAnswer(id, e.target.value)}
                       disabled={sheet.corrected}
                     />
                     {sheet.corrected && (
-                      <small>{sheet.results[id] ? "Correct" : b.name}</small>
+                      <small>{sheet.results[id] ? t("Correct") : b.name}</small>
                     )}
                   </label>
                 ) : (

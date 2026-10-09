@@ -1,6 +1,6 @@
 # Oscar — interactive ST2S anatomy
 
-A French 3D skeleton learning workspace: exploration, anatomy hierarchy, region visibility, X-ray, isolation, worksheet labels, model-based revision and locally persisted mastery.
+A French/Ukrainian 3D skeleton learning workspace: exploration, anatomy hierarchy, region visibility, X-ray, isolation, worksheet labels, model-based revision and locally persisted mastery.
 
 ## Run
 
@@ -19,6 +19,12 @@ npm run dev
 - **Ma progression:** per-structure and per-group mastery, due structures, saved revisions and recent sessions.
 
 All records begin at zero. localStorage stores mastery, correct/wrong counts, recent performance, review dates, streaks, saved structures, XP and sessions. Mastery decays with elapsed time; scheduling weights low mastery, recent errors and overdue dates. No accounts or remote database are needed. Storage is per browser, per origin.
+
+## Languages
+
+The header selector switches between Français and Українська on desktop and mobile. Its choice is saved separately as `oscar-language-v1`; changing language preserves the active quiz, worksheet answers, selection and progress. UI copy, all 30 anatomy records, group names, questions and feedback are translated. Search and worksheet correction accept French and Ukrainian names and synonyms, including Cyrillic and apostrophe variants.
+
+Ukrainian terminology was checked against [Sumy State University’s anatomy text](https://anatomy.med.sumdu.edu.ua/wp-content/uploads/2020/07/anatomy-oporno-pod_apparat.pdf).
 
 ## Architecture
 

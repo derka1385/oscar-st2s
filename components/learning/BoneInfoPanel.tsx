@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/lib/useI18n";
 import {
   Scan,
   EyeOff,
@@ -15,10 +16,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAnatomy } from "@/store/anatomyStore";
 import { useProgress } from "@/store/progressStore";
 import { useQuiz } from "@/store/quizStore";
-import { boneById } from "@/data/anatomy/skeleton";
-import { groupById } from "@/data/anatomy/groups";
 import { effectiveMastery } from "@/lib/mastery";
 export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
+  const { t, boneById, groupById } = useI18n();
   const a = useAnatomy();
   const p = useProgress();
   const b = a.selected ? boneById[a.selected] : null;
@@ -26,11 +26,8 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
     return (
       <aside className="detail-panel empty-detail">
         <Info size={25} />
-        <h2>Un os, une découverte.</h2>
-        <p>
-          Sélectionne une structure sur Oscar ou dans l’index pour explorer son
-          rôle.
-        </p>
+        <h2>{t("Un os, une découverte.")}</h2>
+        <p>{t("Sélectionne une structure sur Oscar ou dans l’index pour explorer son rôle. ")}</p>
       </aside>
     );
   const g = groupById[b.category];
@@ -40,12 +37,10 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
     <aside className="detail-panel">
       <div className="panel-topline">
         <span>
-          <Info size={15} />
-          Fiche anatomique
-        </span>
+          <Info size={15} />{t("Fiche anatomique ")}</span>
         <button
           className="icon-button mobile-close"
-          aria-label="Fermer la fiche"
+          aria-label={t("Fermer la fiche")}
           onClick={() => onClose ? onClose() : useAnatomy.setState({ selected: null })}
         >
           <X size={16} />
@@ -66,7 +61,7 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
         >
           <div className="bone-name">
             <span className="bone-category">
-              {g.axial ? "Squelette axial" : "Squelette appendiculaire"}
+              {g.axial ? t("Squelette axial") : t("Squelette appendiculaire")}
             </span>
             <h2>{b.name}</h2>
             <button
@@ -83,25 +78,25 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
           <p className="bone-description">{b.description}</p>
           <dl className="anatomy-facts">
             <div>
-              <dt>Nom moderne</dt>
+              <dt>{t("Nom moderne")}</dt>
               <dd>{b.name}</dd>
             </div>
             <div>
-              <dt>Ancien terme</dt>
+              <dt>{t("Ancien terme")}</dt>
               <dd>{b.aliases.join(", ") || "—"}</dd>
             </div>
             <div>
-              <dt>Groupe</dt>
+              <dt>{t("Groupe")}</dt>
               <dd>{g.shortName}</dd>
             </div>
             <div>
-              <dt>Type</dt>
+              <dt>{t("Type")}</dt>
               <dd>
                 {b.kind === "joint"
-                  ? "Articulation"
+                  ? t("Articulation")
                   : b.kind === "region"
-                    ? "Ensemble osseux"
-                    : "Os"}
+                    ? t("Ensemble osseux")
+                    : t("Os")}
               </dd>
             </div>
           </dl>
@@ -119,34 +114,28 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
             >
               <Scan size={16} />
               {a.isolation?.id === b.id
-                ? "Quitter l’isolation"
-                : "Isoler la structure"}
+                ? t("Quitter l’isolation")
+                : t("Isoler la structure")}
             </button>
             <div className="split-actions">
               <button className="secondary-button" onClick={() => { a.hide(b.id); onClose?.(); }}>
-                <EyeOff size={15} />
-                Masquer
-              </button>
+                <EyeOff size={15} />{t("Masquer ")}</button>
               <button
                 className="secondary-button"
                 onClick={() => { a.setCamera(b.anchor, 4.5); onClose?.(); }}
               >
-                <Focus size={15} />
-                Centrer
-              </button>
+                <Focus size={15} />{t("Centrer ")}</button>
             </div>
             <button
               className="text-button view-skeleton"
               onClick={() => { a.reset(); onClose?.(); }}
-            >
-              Voir dans le squelette
-              <ChevronRight size={14} />
+            >{t("Voir dans le squelette ")}<ChevronRight size={14} />
             </button>
           </div>
           <div className="key-point">
             <div>
               <Lightbulb size={17} />
-              <strong>À retenir</strong>
+              <strong>{t("À retenir")}</strong>
             </div>
             <p>{b.fact}</p>
           </div>
@@ -155,14 +144,13 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
             onClick={() => { a.isolate(g.id, "group"); onClose?.(); }}
           >
             <Layers size={16} />
-            <span>
-              Explorer la région<span>{g.shortName}</span>
+            <span>{t("Explorer la région")}<span>{g.shortName}</span>
             </span>
             <ChevronRight size={15} />
           </button>
           <div className="bone-mastery">
             <div>
-              <span>Maîtrise de la structure</span>
+              <span>{t("Maîtrise de la structure")}</span>
               <strong>{mastery}%</strong>
             </div>
             <div className="progress-track">
@@ -171,9 +159,9 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
             <small>
               {p.records[b.id].lastReviewedAt
                 ? mastery < 75
-                  ? "À revoir · une nouvelle session t’attend."
-                  : "Bien acquis · continue à réviser régulièrement."
-                : "Pas encore révisée"}
+                  ? t("À revoir · une nouvelle session t’attend.")
+                  : t("Bien acquis · continue à réviser régulièrement.")
+                : t("Pas encore révisée")}
             </small>
           </div>
           <button
@@ -182,20 +170,19 @@ export function BoneInfoPanel({ onClose }: { onClose?: () => void } = {}) {
           >
             {saved ? <Check size={16} /> : <Bookmark size={16} />}
             <span>
-              {saved ? "Ajoutée à mes révisions" : "Ajouter aux révisions"}
+              {saved ? t("Ajoutée à mes révisions") : t("Ajouter aux révisions")}
             </span>
           </button>
           {saved && (
             <button
               className="text-button"
               onClick={() => { useQuiz.getState().start(p.saved); onClose?.(); }}
-            >
-              Réviser ma sélection ({p.saved.length})<ChevronRight size={14} />
+            >{t("Réviser ma sélection ({count})", { count: p.saved.length })}<ChevronRight size={14} />
             </button>
           )}
         </motion.div>
       </AnimatePresence>
-      <div className="detail-footer">BIOLOGIE & PHYSIOPATHOLOGIE HUMAINES</div>
+      <div className="detail-footer">{t("BIOLOGIE & PHYSIOPATHOLOGIE HUMAINES")}</div>
     </aside>
   );
 }

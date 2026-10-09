@@ -1,16 +1,17 @@
 "use client";
+import { useI18n } from "@/lib/useI18n";
 import { Check, X, ScanLine } from "lucide-react";
-import { groups } from "@/data/anatomy/groups";
 import { useAnatomy } from "@/store/anatomyStore";
 export function VisibilityPanel() {
+  const { t, groups } = useI18n();
   const a = useAnatomy();
   return (
     <div className="visibility-panel">
       <div className="popover-heading">
-        <strong>Visibilité</strong>
+        <strong>{t("Visibilité")}</strong>
         <button
           className="icon-button"
-          aria-label="Fermer la visibilité"
+          aria-label={t("Fermer la visibilité")}
           onClick={() => useAnatomy.setState({ visibilityOpen: false })}
         >
           <X size={15} />
@@ -35,23 +36,18 @@ export function VisibilityPanel() {
           onClick={() =>
             useAnatomy.setState({ hiddenGroups: [], hiddenBones: [] })
           }
-        >
-          Tout afficher
-        </button>
+        >{t("Tout afficher ")}</button>
         <button
           onClick={() =>
             useAnatomy.setState({ hiddenGroups: groups.map((g) => g.id) })
           }
-        >
-          Tout masquer
-        </button>
+        >{t("Tout masquer ")}</button>
       </div>
       <button
         className={"xray-button " + (a.xray ? "active" : "")}
         onClick={() => useAnatomy.setState({ xray: !a.xray })}
       >
-        <ScanLine size={16} />
-        Rayon X<span className="mini-switch" />
+        <ScanLine size={16} />{t("Rayon X")}<span className="mini-switch" />
       </button>
     </div>
   );
